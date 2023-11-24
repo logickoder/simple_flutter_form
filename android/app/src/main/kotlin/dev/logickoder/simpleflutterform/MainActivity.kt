@@ -1,4 +1,4 @@
-package dev.logickoder.simple_flutter_form
+package dev.logickoder.simpleflutterform
 
 import io.flutter.embedding.android.FlutterActivity
 

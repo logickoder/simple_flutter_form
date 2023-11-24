@@ -56,11 +56,7 @@ class AuthScreen extends StatelessWidget {
               width: double.infinity,
               child: OutlinedButton.icon(
                 onPressed: () {},
-                icon: SvgPicture.asset(
-                  AppAsset.googleIcon,
-                  width: 20,
-                  height: 20,
-                ),
+                icon: SvgPicture.asset(AppAsset.googleIcon),
                 label: const Text('Continue with Google'),
               ),
             ),
@@ -68,11 +64,7 @@ class AuthScreen extends StatelessWidget {
               width: double.infinity,
               child: OutlinedButton.icon(
                 onPressed: () {},
-                icon: SvgPicture.asset(
-                  AppAsset.facebookIcon,
-                  width: 20,
-                  height: 20,
-                ),
+                icon: SvgPicture.asset(AppAsset.facebookIcon),
                 label: const Text('Continue with Facebook'),
               ),
             ),
