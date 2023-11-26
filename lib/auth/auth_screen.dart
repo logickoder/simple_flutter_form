@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../app/asset.dart';
+import '../app/route.dart';
 import '../app/theme.dart';
 
 class AuthScreen extends StatelessWidget {
@@ -55,7 +56,7 @@ class AuthScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: () {},
+                onPressed: () => Navigator.pushNamed(context, AppRoute.form),
                 icon: SvgPicture.asset(AppAsset.googleIcon),
                 label: const Text('Continue with Google'),
               ),
@@ -63,7 +64,7 @@ class AuthScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: () {},
+                onPressed: () => Navigator.pushNamed(context, AppRoute.form),
                 icon: SvgPicture.asset(AppAsset.facebookIcon),
                 label: const Text('Continue with Facebook'),
               ),

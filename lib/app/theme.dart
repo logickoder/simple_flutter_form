@@ -34,6 +34,7 @@ class AppTheme {
       ),
       colorScheme: ColorScheme.fromSeed(
         seedColor: color.primary,
+        secondary: color.primary,
         background: color.background,
         surface: color.card,
         onSurface: color.body,
@@ -49,6 +50,26 @@ class AppTheme {
           side: BorderSide(color: color.border),
         ),
       ),
+      inputDecorationTheme: () {
+        final radius = BorderRadius.circular(10);
+        return InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: radius,
+            borderSide: BorderSide(color: color.border),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: radius,
+            borderSide: BorderSide(color: color.primary),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: radius,
+            borderSide: BorderSide(color: color.primary),
+          ),
+          contentPadding: const EdgeInsets.all(16),
+          isDense: true,
+          hintStyle: TextStyle(color: color.title.withOpacity(.5)),
+        );
+      }(),
     );
   }
 }
