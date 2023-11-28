@@ -50,6 +50,12 @@ class AppTheme {
           side: BorderSide(color: color.border),
         ),
       ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: color.background,
+          backgroundColor: color.primary,
+        ),
+      ),
       inputDecorationTheme: () {
         final radius = BorderRadius.circular(10);
         return InputDecorationTheme(

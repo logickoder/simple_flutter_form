@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../app/asset.dart';
+import '../app/domain/service/auth_service.dart';
 import '../app/route.dart';
 import '../app/theme.dart';
 
@@ -56,7 +57,10 @@ class AuthScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: () => Navigator.pushNamed(context, AppRoute.form),
+                onPressed: () => _handleAuthentication(
+                  context,
+                  _AuthType.google,
+                ),
                 icon: SvgPicture.asset(AppAsset.googleIcon),
                 label: const Text('Continue with Google'),
               ),
@@ -64,7 +68,10 @@ class AuthScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: () => Navigator.pushNamed(context, AppRoute.form),
+                onPressed: () => _handleAuthentication(
+                  context,
+                  _AuthType.facebook,
+                ),
                 icon: SvgPicture.asset(AppAsset.facebookIcon),
                 label: const Text('Continue with Facebook'),
               ),
@@ -75,4 +82,39 @@ class AuthScreen extends StatelessWidget {
       ),
     );
   }
+
+  void _handleAuthentication(BuildContext context, _AuthType type) {
+    final action = switch (type) {
+      _AuthType.google => AuthService.signInWithGoogle(),
+      _AuthType.facebook => AuthService.signInWithFacebook(),
+    };
+    action.then((_) {
+      Navigator.pushNamed(context, AppRoute.form);
+    }).catchError((error) {
+      String message;
+      try {
+        message = error.message;
+      } catch (_) {
+        message = error.toString();
+      }
+
+      showAdaptiveDialog(
+        context: context,
+        builder: (ctx) => AlertDialog.adaptive(
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+}
+
+enum _AuthType {
+  google,
+  facebook,
 }
