@@ -89,7 +89,7 @@ class AuthScreen extends StatelessWidget {
       _AuthType.facebook => AuthService.signInWithFacebook(),
     };
     action.then((_) {
-      Navigator.pushNamed(context, AppRoute.form);
+      Navigator.pushReplacementNamed(context, AppRoute.forms);
     }).catchError((error) {
       String message;
       try {

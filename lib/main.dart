@@ -22,7 +22,8 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Form',
       theme: AppTheme.light,
       // darkTheme: AppTheme.dark,
-      initialRoute: AuthService.noUserPresent() ? AppRoute.auth : AppRoute.form,
+      initialRoute:
+          AuthService.noUserPresent() ? AppRoute.auth : AppRoute.forms,
       routes: AppRoute.routes,
       debugShowCheckedModeBanner: false,
     );

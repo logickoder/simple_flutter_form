@@ -24,6 +24,12 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
   final _controller = TextEditingController();
 
   @override
+  void initState() {
+    widget.controller.addListener(_loadPhoneNumber);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: _controller,
@@ -41,6 +47,7 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
         } else if (number.isEmpty) {
           return 'A phone number is required';
         } else {
+          widget.controller.text = '${_country?.dialCode ?? ''} $number';
           return null;
         }
       },
@@ -48,10 +55,6 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
         prefixIcon: _dialCodeSelector(),
         counter: const SizedBox.shrink(),
       ),
-      onSaved: (value) {
-        final number = value ?? '';
-        widget.controller.text = '${_country?.dialCode ?? ''} $number';
-      },
     );
   }
 
@@ -114,6 +117,23 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
         },
       ],
     );
+  }
+
+  /// Loads the initial non-empty phone number from the controller
+  void _loadPhoneNumber() {
+    final number = widget.controller.text;
+    if (number.isEmpty) {
+      return;
+    }
+
+    final spaceIndex = number.indexOf(' ');
+    final dialCode = number.substring(0, spaceIndex);
+    final phoneNumber = number.substring(spaceIndex + 1);
+
+    _controller.text = phoneNumber;
+    PhoneService.getCountryByDialCode(dialCode).then((value) {
+      setState(() => _country = value);
+    });
   }
 }
 

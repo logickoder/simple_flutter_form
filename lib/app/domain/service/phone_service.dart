@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:collection';
 
 import 'package:flutter/services.dart';
 
@@ -10,5 +11,18 @@ class PhoneService {
     final json = await rootBundle.loadString(AppAsset.countries);
     final countries = jsonDecode(json) as List<dynamic>;
     return countries.map((e) => Country.fromJson(e)).toList();
+  }
+
+  static Future<Country?> getCountryByDialCode(String dialCode) {
+    return getCountries().then((countries) {
+      final index = countries.indexWhere(
+        (country) => country.dialCode == dialCode,
+      );
+      if (index == -1) {
+        return null;
+      }
+
+      return countries[index];
+    });
   }
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
-import '../app/theme.dart';
+import '../app/data/model/form.dart' as model;
+
+import '../app/domain/service/form_service.dart';
 import 'date_of_birth_field.dart';
 import 'form_label.dart';
 import 'phone_number_field.dart';
@@ -16,6 +17,7 @@ class FormScreen extends StatefulWidget {
 class _FormScreenState extends State<FormScreen> {
   final _form = GlobalKey<FormState>();
 
+  final _title = TextEditingController();
   final _name = TextEditingController();
   final _email = TextEditingController();
   final _phoneNumber = TextEditingController();
@@ -23,12 +25,21 @@ class _FormScreenState extends State<FormScreen> {
   final _address = TextEditingController();
 
   @override
+  void initState() {
+    Future.delayed(Duration.zero, _loadForm);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final color = AppColor.of(context);
     const spacing = SizedBox(height: 16);
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          form == null ? 'Enter your details' : 'Update your details',
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -36,14 +47,15 @@ class _FormScreenState extends State<FormScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Enter your details',
-                style: textTheme.headlineLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: color.title,
+              const FormLabel('Title'),
+              TextFormField(
+                controller: _title,
+                decoration: const InputDecoration(
+                  hintText: 'Enter the form title',
                 ),
+                validator: _titleValidator,
               ),
-              const SizedBox(height: 32),
+              spacing,
               const FormLabel('Name'),
               TextFormField(
                 controller: _name,
@@ -85,7 +97,7 @@ class _FormScreenState extends State<FormScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _submitForm,
-                  child: const Text('Submit'),
+                  child: Text(form == null ? 'Save' : 'Update'),
                 ),
               ),
             ],
@@ -93,6 +105,37 @@ class _FormScreenState extends State<FormScreen> {
         ),
       ),
     );
+  }
+
+  model.Form? get form {
+    return ModalRoute.of(context)?.settings.arguments as model.Form?;
+  }
+
+  void _loadForm() async {
+    final form = this.form;
+    if (form == null) {
+      return;
+    }
+
+    _title.text = form.title;
+    _name.text = form.name;
+    _email.text = form.email;
+    _phoneNumber.text = form.phoneNumber;
+    _dateOfBirth.text = () {
+      final day = form.dateOfBirth.day.toString().padLeft(2, '0');
+      final month = form.dateOfBirth.month.toString().padLeft(2, '0');
+      final year = form.dateOfBirth.year;
+      return '$day/$month/$year';
+    }();
+    _address.text = form.address;
+  }
+
+  String? _titleValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter the form title';
+    }
+
+    return null;
   }
 
   String? _nameValidator(String? value) {
@@ -128,11 +171,31 @@ class _FormScreenState extends State<FormScreen> {
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Form submitted'),
+    final dateOfBirth = _dateOfBirth.text;
+    final dateSplits = dateOfBirth.split('/');
+
+    final form = model.Form(
+      id: this.form?.id,
+      title: _title.text,
+      name: _name.text,
+      email: _email.text,
+      phoneNumber: _phoneNumber.text,
+      dateOfBirth: DateTime(
+        int.parse(dateSplits[2]),
+        int.parse(dateSplits[1]),
+        int.parse(dateSplits[0]),
       ),
+      address: _address.text,
     );
-    Navigator.pop(context);
+    final message = form.id == null
+        ? 'Form saved successfully'
+        : 'Form updated successfully';
+
+    FormService.save(form).then((value) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+      Navigator.pop(context, true);
+    });
   }
 }
