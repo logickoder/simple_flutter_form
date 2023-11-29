@@ -31,9 +31,7 @@ jobs:
         run: |
           npm install -g firebase-tools
           dart pub global activate flutterfire_cli
-          pwd
-          ls -a
-          flutterfire configure --project=simple-flutter-form --token=${{ secrets.FIREBASE_TOKEN }} --yes --platforms=android,ios,macos,web,linux,windows
+          flutterfire configure --project=simple-flutter-form --token=${{ secrets.FIREBASE_TOKEN }} --yes --platforms=android,ios,macos,web --android-package-name=dev.logickoder.simpleflutterform --ios-bundle-id=dev.logickoder.simpleFlutterForm
 
       - name: Install dependencies
         run: flutter pub get
