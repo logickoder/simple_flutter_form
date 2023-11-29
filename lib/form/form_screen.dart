@@ -54,80 +54,77 @@ class _FormScreenState extends State<FormScreen> {
           },
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _form,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const FormLabel('Title'),
-              TextFormField(
-                controller: _title,
-                decoration: const InputDecoration(
-                  hintText: 'Enter the form title',
-                ),
-                validator: _titleValidator,
-                textCapitalization: TextCapitalization.words,
-                textInputAction: TextInputAction.next,
+      body: Form(
+        key: _form,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            const FormLabel('Title'),
+            TextFormField(
+              controller: _title,
+              decoration: const InputDecoration(
+                hintText: 'Enter the form title',
               ),
-              spacing,
-              const FormLabel('Name'),
-              TextFormField(
-                controller: _name,
-                decoration: const InputDecoration(
-                  hintText: 'Enter your full name',
-                ),
-                validator: _nameValidator,
-                keyboardType: TextInputType.name,
-                textInputAction: TextInputAction.next,
+              validator: _titleValidator,
+              textCapitalization: TextCapitalization.words,
+              textInputAction: TextInputAction.next,
+            ),
+            spacing,
+            const FormLabel('Name'),
+            TextFormField(
+              controller: _name,
+              decoration: const InputDecoration(
+                hintText: 'Enter your full name',
               ),
-              spacing,
-              const FormLabel('E-mail'),
-              TextFormField(
-                controller: _email,
-                decoration: const InputDecoration(
-                  hintText: 'Enter your e-mail address',
-                ),
-                validator: _emailValidator,
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
+              validator: _nameValidator,
+              keyboardType: TextInputType.name,
+              textInputAction: TextInputAction.next,
+            ),
+            spacing,
+            const FormLabel('E-mail'),
+            TextFormField(
+              controller: _email,
+              decoration: const InputDecoration(
+                hintText: 'Enter your e-mail address',
               ),
-              spacing,
-              const FormLabel('Phone Number'),
-              PhoneNumberField(
-                controller: _phoneNumber,
+              validator: _emailValidator,
+              keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.next,
+            ),
+            spacing,
+            const FormLabel('Phone Number'),
+            PhoneNumberField(
+              controller: _phoneNumber,
+            ),
+            spacing,
+            const FormLabel('Date of Birth'),
+            DateOfBirthField(
+              controller: _dateOfBirth,
+            ),
+            spacing,
+            const FormLabel('Address'),
+            TextFormField(
+              controller: _address,
+              decoration: const InputDecoration(
+                hintText: 'Enter your address',
               ),
-              spacing,
-              const FormLabel('Date of Birth'),
-              DateOfBirthField(
-                controller: _dateOfBirth,
+              validator: _addressValidator,
+              keyboardType: TextInputType.streetAddress,
+              textInputAction: TextInputAction.done,
+            ),
+            const SizedBox(height: 32),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _formSaving ? null : _submitForm,
+                child: _formSaving
+                    ? CircularProgressIndicator(
+                        color: AppColor.of(context).background,
+                      )
+                    : Text(form == null ? 'Save' : 'Update'),
               ),
-              spacing,
-              const FormLabel('Address'),
-              TextFormField(
-                controller: _address,
-                decoration: const InputDecoration(
-                  hintText: 'Enter your address',
-                ),
-                validator: _addressValidator,
-                keyboardType: TextInputType.streetAddress,
-                textInputAction: TextInputAction.done,
-              ),
-              const Spacer(),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _formSaving ? null : _submitForm,
-                  child: _formSaving
-                      ? CircularProgressIndicator(
-                          color: AppColor.of(context).background,
-                        )
-                      : Text(form == null ? 'Save' : 'Update'),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
