@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../app/data/model/form.dart' as model;
 
 import '../app/domain/service/form_service.dart';
+import '../app/theme.dart';
 import 'date_of_birth_field.dart';
 import 'form_label.dart';
 import 'phone_number_field.dart';
@@ -23,6 +24,8 @@ class _FormScreenState extends State<FormScreen> {
   final _phoneNumber = TextEditingController();
   final _dateOfBirth = TextEditingController();
   final _address = TextEditingController();
+
+  var _formSaving = false;
 
   @override
   void initState() {
@@ -96,8 +99,12 @@ class _FormScreenState extends State<FormScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _submitForm,
-                  child: Text(form == null ? 'Save' : 'Update'),
+                  onPressed: _formSaving ? null : _submitForm,
+                  child: _formSaving
+                      ? CircularProgressIndicator(
+                          color: AppColor.of(context).background,
+                        )
+                      : Text(form == null ? 'Save' : 'Update'),
                 ),
               ),
             ],
@@ -171,6 +178,8 @@ class _FormScreenState extends State<FormScreen> {
       return;
     }
 
+    setState(() => _formSaving = true);
+
     final dateOfBirth = _dateOfBirth.text;
     final dateSplits = dateOfBirth.split('/');
 
@@ -196,6 +205,8 @@ class _FormScreenState extends State<FormScreen> {
         SnackBar(content: Text(message)),
       );
       Navigator.pop(context, true);
+    }).whenComplete(() {
+      setState(() => _formSaving = false);
     });
   }
 }

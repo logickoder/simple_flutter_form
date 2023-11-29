@@ -1,14 +1,22 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../app/asset.dart';
 import '../app/domain/service/auth_service.dart';
+import '../app/domain/service/form_service.dart';
 import '../app/route.dart';
 import '../app/theme.dart';
 
-class AuthScreen extends StatelessWidget {
+class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
 
+  @override
+  State<AuthScreen> createState() => _AuthScreenState();
+}
+
+class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     final color = AppColor.of(context);
@@ -57,10 +65,7 @@ class AuthScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: () => _handleAuthentication(
-                  context,
-                  _AuthType.google,
-                ),
+                onPressed: () => _handleAuthentication(_AuthType.google),
                 icon: SvgPicture.asset(AppAsset.googleIcon),
                 label: const Text('Continue with Google'),
               ),
@@ -68,10 +73,7 @@ class AuthScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: () => _handleAuthentication(
-                  context,
-                  _AuthType.facebook,
-                ),
+                onPressed: () => _handleAuthentication(_AuthType.facebook),
                 icon: SvgPicture.asset(AppAsset.facebookIcon),
                 label: const Text('Continue with Facebook'),
               ),
@@ -83,34 +85,42 @@ class AuthScreen extends StatelessWidget {
     );
   }
 
-  void _handleAuthentication(BuildContext context, _AuthType type) {
+  void _handleAuthentication(_AuthType type) {
     final action = switch (type) {
       _AuthType.google => AuthService.signInWithGoogle(),
       _AuthType.facebook => AuthService.signInWithFacebook(),
     };
     action.then((_) {
-      Navigator.pushReplacementNamed(context, AppRoute.forms);
-    }).catchError((error) {
-      String message;
-      try {
-        message = error.message;
-      } catch (_) {
-        message = error.toString();
-      }
+      _loadFormsFromRemote();
+    }).catchError(_handleError);
+  }
 
-      showAdaptiveDialog(
-        context: context,
-        builder: (ctx) => AlertDialog.adaptive(
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
-    });
+  void _loadFormsFromRemote() async {
+    FormService.getFromFirebase().then((value) {
+      Navigator.pushReplacementNamed(context, AppRoute.forms);
+    }).catchError(_handleError);
+  }
+
+  FutureOr<Null> _handleError(dynamic error) {
+    String message;
+    try {
+      message = error.message;
+    } catch (_) {
+      message = error.toString();
+    }
+
+    showAdaptiveDialog(
+      context: context,
+      builder: (ctx) => AlertDialog.adaptive(
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 }
 

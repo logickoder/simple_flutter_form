@@ -34,7 +34,8 @@ class AppTheme {
       ),
       colorScheme: ColorScheme.fromSeed(
         seedColor: color.primary,
-        secondary: color.primary,
+        primary: color.primary,
+        onPrimary: color.background,
         background: color.background,
         surface: color.card,
         onSurface: color.body,
@@ -54,6 +55,7 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           foregroundColor: color.background,
           backgroundColor: color.primary,
+          disabledBackgroundColor: color.primary,
         ),
       ),
       inputDecorationTheme: () {

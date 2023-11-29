@@ -1,22 +1,31 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../data/local/database.dart';
 import '../../data/model/form.dart';
+import 'auth_service.dart';
 
 class FormService {
   static Future<void> save(Form form) async {
     final db = await AppDatabase().value;
-    if (form.id == null) {
-      await db.insert(tableName, form.toJson());
+    var id = form.id;
+
+    if (id == null) {
+      id = await db.insert(tableName, form.toJson());
     } else {
       await db.update(
         tableName,
         form.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace,
         where: 'id = ?',
-        whereArgs: [form.id],
+        whereArgs: [id],
       );
     }
+    // save to firebase
+    await FirebaseFirestore.instance
+        .collection(AuthService.userId)
+        .doc(id.toString())
+        .set(form.toJson());
   }
 
   static Future<List<Form>> getAll() async {
@@ -26,6 +35,26 @@ class FormService {
     return List.generate(rows.length, (i) {
       return Form.fromJson(rows[i]);
     });
+  }
+
+  /// retrieves all forms from the remote database and stores them locally
+  static Future<void> getFromFirebase() async {
+    final collection = FirebaseFirestore.instance.collection(
+      AuthService.userId,
+    );
+    final snapshot = await collection.get();
+
+    final items = snapshot.docs.map((doc) {
+      final data = doc.data();
+      data['id'] = int.parse(doc.id);
+      return Form.fromJson(data);
+    }).toList();
+
+    final db = await AppDatabase().value;
+    await db.delete(tableName);
+    for (final item in items) {
+      await db.insert(tableName, item.toJson());
+    }
   }
 
   static const tableName = 'form';
