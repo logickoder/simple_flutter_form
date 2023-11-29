@@ -31,7 +31,7 @@ jobs:
         run: |
           npm install -g firebase-tools
           dart pub global activate flutterfire_cli
-          flutterfire configure --project=simple-flutter-form --yes --token=${{ secrets.FIREBASE_TOKEN }}
+          flutterfire configure --project=simple-flutter-form --token=${{ secrets.FIREBASE_TOKEN }} --yes --platforms=android,ios,macos,web,linux,windows
 
       - name: Install dependencies
         run: flutter pub get
