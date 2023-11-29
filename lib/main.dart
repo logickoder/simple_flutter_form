@@ -23,8 +23,7 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       initialRoute:
-          // AuthService.noUserPresent() ? AppRoute.auth : AppRoute.forms,
-          AppRoute.auth,
+          AuthService.noUserPresent() ? AppRoute.auth : AppRoute.forms,
       routes: AppRoute.routes,
       debugShowCheckedModeBanner: false,
     );

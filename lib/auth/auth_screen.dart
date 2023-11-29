@@ -17,6 +17,9 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+  var _isGoogleSignInLoading = false;
+  var _isFacebookSignInLoading = false;
+
   @override
   Widget build(BuildContext context) {
     final color = AppColor.of(context);
@@ -65,17 +68,25 @@ class _AuthScreenState extends State<AuthScreen> {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: () => _handleAuthentication(_AuthType.google),
+                onPressed: _isGoogleSignInLoading
+                    ? null
+                    : () => _handleAuthentication(_AuthType.google),
                 icon: SvgPicture.asset(AppAsset.googleIcon),
-                label: const Text('Continue with Google'),
+                label: _isGoogleSignInLoading
+                    ? const CircularProgressIndicator()
+                    : const Text('Continue with Google'),
               ),
             ),
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
-                onPressed: () => _handleAuthentication(_AuthType.facebook),
+                onPressed: _isFacebookSignInLoading
+                    ? null
+                    : () => _handleAuthentication(_AuthType.facebook),
                 icon: SvgPicture.asset(AppAsset.facebookIcon),
-                label: const Text('Continue with Facebook'),
+                label: _isFacebookSignInLoading
+                    ? const CircularProgressIndicator()
+                    : const Text('Continue with Facebook'),
               ),
             ),
             const SizedBox(height: 32),
@@ -86,6 +97,16 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   void _handleAuthentication(_AuthType type) {
+    setState(() {
+      switch (type) {
+        case _AuthType.google:
+          _isGoogleSignInLoading = true;
+          break;
+        case _AuthType.facebook:
+          _isFacebookSignInLoading = true;
+          break;
+      }
+    });
     final action = switch (type) {
       _AuthType.google => AuthService.signInWithGoogle(),
       _AuthType.facebook => AuthService.signInWithFacebook(),
@@ -96,12 +117,17 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   void _loadFormsFromRemote() async {
-    FormService.getFromFirebase().then((value) {
-      Navigator.pushReplacementNamed(context, AppRoute.forms);
-    }).catchError(_handleError);
+    FormService.getFromFirebase()
+        .then((value) {
+          Navigator.pushReplacementNamed(context, AppRoute.forms);
+        })
+        .catchError(_handleError)
+        .whenComplete(_clearLoadingState);
   }
 
   FutureOr<Null> _handleError(dynamic error) {
+    _clearLoadingState();
+
     String message;
     try {
       message = error.message;
@@ -121,6 +147,13 @@ class _AuthScreenState extends State<AuthScreen> {
         ],
       ),
     );
+  }
+
+  void _clearLoadingState() {
+    setState(() {
+      _isGoogleSignInLoading = false;
+      _isFacebookSignInLoading = false;
+    });
   }
 }
 
