@@ -18,10 +18,10 @@ class AppTheme {
     color: const AppColor(
       primary: Color(0xFFFFFFFF),
       background: Color(0xFF000000),
-      card: Color(0xFFF0F3FB),
+      card: Color(0xFF181C20),
       title: Color(0xFFFFFFFF),
-      body: Color(0xB2FFFFFF),
-      border: Color(0xFFD8DADC),
+      body: Color(0x8AFFFFFF),
+      border: Color(0x4BFFFFFF),
     ),
     base: ThemeData.dark(),
   );
