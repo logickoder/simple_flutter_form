@@ -22,8 +22,11 @@ migrate_working_dir/
 #.vscode/
 
 # Flutter/Dart/Pub related
+/lib/firebase_options.dart
 **/doc/api/
 **/ios/Flutter/.last_build_id
+**/Runner/GoogleService-Info.plist
+**/firebase_app_id_file.json
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
