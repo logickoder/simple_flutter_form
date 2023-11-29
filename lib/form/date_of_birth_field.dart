@@ -28,6 +28,7 @@ class DateOfBirthField extends StatelessWidget {
         counter: const SizedBox.shrink(),
       ),
       validator: _validator,
+      textInputAction: TextInputAction.next,
     );
   }
 

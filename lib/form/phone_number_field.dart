@@ -34,6 +34,7 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
     return TextFormField(
       controller: _controller,
       keyboardType: TextInputType.number,
+      textInputAction: TextInputAction.next,
       inputFormatters: [
         FilteringTextInputFormatter.digitsOnly,
         _PhoneNumberSpacingFormatter(),
