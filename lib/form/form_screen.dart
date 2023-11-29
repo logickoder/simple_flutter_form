@@ -26,6 +26,7 @@ class _FormScreenState extends State<FormScreen> {
   final _address = TextEditingController();
 
   var _formSaving = false;
+  var _formDeleting = false;
 
   @override
   void initState() {
@@ -42,6 +43,16 @@ class _FormScreenState extends State<FormScreen> {
         title: Text(
           form == null ? 'Enter your details' : 'Update your details',
         ),
+        actions: [
+          if (form != null) ...{
+            IconButton(
+              onPressed: _formDeleting ? null : _showDeleteFormDialog,
+              icon: _formDeleting
+                  ? const CircularProgressIndicator()
+                  : const Icon(Icons.delete),
+            )
+          },
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -208,5 +219,41 @@ class _FormScreenState extends State<FormScreen> {
     }).whenComplete(() {
       setState(() => _formSaving = false);
     });
+  }
+
+  void _deleteForm() {
+    setState(() => _formDeleting = true);
+
+    FormService.delete(form!.id!).then((value) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Form deleted successfully')),
+      );
+      Navigator.pop(context, true);
+    }).whenComplete(() {
+      setState(() => _formDeleting = false);
+    });
+  }
+
+  void _showDeleteFormDialog() {
+    showAdaptiveDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Form'),
+        content: const Text('Are you sure you want to delete this form?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              _deleteForm();
+            },
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
   }
 }

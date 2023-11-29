@@ -28,6 +28,20 @@ class FormService {
         .set(form.toJson());
   }
 
+  static Future<void> delete(int id) async {
+    final db = await AppDatabase().value;
+    await db.delete(
+      tableName,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    // delete from firebase
+    await FirebaseFirestore.instance
+        .collection(AuthService.userId)
+        .doc(id.toString())
+        .delete();
+  }
+
   static Future<List<Form>> getAll() async {
     final db = await AppDatabase().value;
     final rows = await db.query(tableName);
